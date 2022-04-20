@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+http://www.springframework.org/schema/beans
+http://www.springframework.org/schema/beans/spring-beans.xsd
+http://www.springframework.org/schema/mvc
+http://www.springframework.org/schema/mvc/spring-mvc.xsd
+http://www.springframework.org/schema/context
+http://www.springframework.org/schema/context/spring-context.xsd">
+    <!--配置扫描包-->
+    <context:component-scan base-package="com.moecola.cms">
+        <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    </context:component-scan>
+    <!--配置视图解析器-->
+    <bean id="resolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/pages/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+    <!--排除静态文件目录-->
+    <mvc:resources mapping="/js/**" location="/static/js/"/>
+    <mvc:resources mapping="/css/**" location="/static/css/"/>
+    <mvc:resources mapping="/uploads/**" location="/static/uploads/"/>
+    <mvc:resources mapping="/pic/**" location="/static/pic/"/>
+    <!--配置登录拦截器-->
+    <mvc:interceptors>
+        <!-- <bean class="com.springmvc.interceptor.InterceptorAll"></bean> -->
+        <mvc:interceptor>
+            <!-- 配置需要拦截的url -->
+            <mvc:mapping path="/account/update**"/>
+            <mvc:mapping path="/account/update**/**"/>
+            <mvc:mapping path="/account/detail**"/>
+            <mvc:mapping path="/account/detail**/**"/>
+            <mvc:mapping path="/article/add**"/>
+            <mvc:mapping path="/article/update**"/>
+            <mvc:mapping path="/article/update**/**"/>
+            <mvc:mapping path="/article/del**"/>
+            <mvc:mapping path="/article/del**/**"/>
+            <!-- 拦截器类定义 -->
+            <bean class="com.moecola.cms.interceptor.AccountInterceptor"/>
+        </mvc:interceptor>
+        <mvc:interceptor>
+            <mvc:mapping path="/admin/**"/>
+            <bean class="com.moecola.cms.interceptor.AdminInterceptor"/>
+        </mvc:interceptor>
+    </mvc:interceptors>
+    <!--配置文件解析器-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="1000000000"/>
+    </bean>
+    <!--开启注释-->
+    <mvc:annotation-driven/>
+</beans>
